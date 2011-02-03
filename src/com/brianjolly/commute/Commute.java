@@ -61,7 +61,7 @@ public class Commute extends Activity
     LocationProvider locationProvider = locationManager.getProvider(LocationManager.GPS_PROVIDER);
 
     // Register the listener with the Location Manager to receive location updates
-    //locationManager.requestLocationUpdates(locationProvider, 0, 0, locationListener);
+    locationManager.requestLocationUpdates(locationProvider, 0, 0, locationListener);
     //Location location = locationManager.getCurrentLocation("gps");
   }
 
