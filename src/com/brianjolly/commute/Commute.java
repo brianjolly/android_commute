@@ -17,6 +17,7 @@ public class Commute extends Activity
 {
   private TextView locationText;
   private Float maxSpeed;
+  private Float bestAccuracy;
 
   /** Called when the activity is first created. */
   @Override
@@ -26,6 +27,7 @@ public class Commute extends Activity
       setContentView(R.layout.main);
 
       maxSpeed = 0.0f;
+      bestAccuracy = 999999999999.0f;
 
       locationText = (TextView)findViewById(R.id.location_text);
 
@@ -74,14 +76,24 @@ public class Commute extends Activity
     if (location.getSpeed() > maxSpeed) {
       maxSpeed = location.getSpeed();
     }
+    if (location.getAccuracy() < bestAccuracy) {
+      bestAccuracy = location.getAccuracy();
+    }
     // at caltrain 4th&king 
     // @37.775930,-122.394997 +/- 12.000000m
+    //
+    // at palo alto
+    // @ 37.443702, -122.165406
+    // best accuracy 3.0000m
+    // max speed 32.461445 m/s
+    //
     Location latestLocation = location;
     String locationString = String.format(
-        "@ %f, %f \naccuracy +/- %fm \nspeed: %f m/s\nmax speed: %f m/s",
+        "@ %f, %f \n\naccuracy +/- %fm \nbest accuracy %fm\n\nspeed: %f m/s\nmax speed: %f m/s",
         location.getLatitude(),
         location.getLongitude(),
         location.getAccuracy(),
+        bestAccuracy,
         location.getSpeed(),
         maxSpeed
         );
