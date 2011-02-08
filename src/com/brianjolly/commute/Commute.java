@@ -27,8 +27,6 @@ public class Commute extends Activity
       super.onCreate(savedInstanceState);
       setContentView(R.layout.main);
 
-      Log.i("Commute", "Heading home!");
-
       maxSpeed = 0.0f;
       bestAccuracy = 999999999999.0f;
 
@@ -47,11 +45,11 @@ public class Commute extends Activity
         public void onProviderDisabled(String provider) {}
       };
 
-      //locationManager = (LocationManager)getSystemService(LOCATION_SERVICE);
       LocationManager locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
 
       // Register the listener with the Location Manager to receive location updates
-      //commented out for mock 
+      //
+      // !commented out for mock 
       //locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
 
 
@@ -64,36 +62,11 @@ public class Commute extends Activity
       //LocationManager locman = (LocationManager)getContext().getSystemService(Context.LOCATION_SERVICE);
       LocationManager locman = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
 
-      String testProviderName = LocationManager.GPS_PROVIDER;
-      locman.addTestProvider(
-          testProviderName,
-          "requiresNetwork" == "",
-          "requiresSatellite" == "",
-          "requiresCell" == "",
-          "hasMonetaryCost" == "",
-          "supportsAltitude" == "",
-          "supportsSpeed" == "",
-          "supportsBearing" == "",
-          android.location.Criteria.POWER_LOW,
-          android.location.Criteria.ACCURACY_FINE);
-
       locman.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
 
-      Location location = setTestLocation(40.738412973944534,-73.98468017578125); 
-      locman.setTestProviderLocation(LocationManager.GPS_PROVIDER, location); 
+      MockLocation mockLoc = new MockLocation( locman );
 
     }
-
-  private Location setTestLocation(double lat, double lng) { 
-    Location location = new Location(LocationManager.GPS_PROVIDER); 
-    location.setLatitude(lat); 
-    location.setLongitude(lng); 
-    location.setSpeed(32f);
-    location.setAccuracy(3f);
-    location.setTime(System.currentTimeMillis()); 
-    return location;
-    //locationManager.setTestProviderLocation("gps", location); 
-  } 
 
   //public void onLocationChanged(Location location) {
   public void makeUseOfNewLocation(Location location) {
