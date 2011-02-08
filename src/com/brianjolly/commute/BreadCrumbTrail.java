@@ -24,7 +24,7 @@ public class BreadCrumbTrail extends View {
     int height = 50;
 
     mDrawable = new PathShape(new Path(), 300f, 300f);
-    Log.i("     -------"+mDrawable.toString());
+    Log.i("BreadCrumbTrain","     -------"+mDrawable.toString());
     //mDrawable = new ShapeDrawable(new OvalShape());
     //mDrawable.getPaint().setColor(0xff74AC23);
     //mDrawable.setBounds(x, y, x + width, y + height);
@@ -36,6 +36,6 @@ public class BreadCrumbTrail extends View {
   }
 
   protected void onDraw(Canvas canvas) {
-    mDrawable.draw(canvas);
+    //mDrawable.draw(canvas);
   }
 }

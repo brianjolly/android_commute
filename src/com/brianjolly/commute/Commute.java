@@ -50,29 +50,50 @@ public class Commute extends Activity
       //locationManager = (LocationManager)getSystemService(LOCATION_SERVICE);
       LocationManager locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
 
-      // Use network location data:
-      //LocationProvider locationProvider = LocationManager.NETWORK_PROVIDER;
-      // Or, use GPS location data:
-      //LocationProvider locationProvider = locationManager.getProvider(LocationManager.GPS_PROVIDER);
-
       // Register the listener with the Location Manager to receive location updates
-      locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
-      //String lm = locationManager.toString();
-      
-      /*
-      Class lm2 = LocationManager.class;
-      Method[] methods = lm2.getDeclaredMethods();
-      String methout = "";
-      for (Method method : methods) {
-        methout += method.getName() + "\n";
-      }
-      */
-        
+      //commented out for mock 
+      //locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
 
-      //locationText.setText(methout);
 
-      //Location location = locationManager.getCurrentLocation("gps");
+      //
+      //
+      // Mock Location
+      //
+      //
+
+      //LocationManager locman = (LocationManager)getContext().getSystemService(Context.LOCATION_SERVICE);
+      LocationManager locman = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+
+      String testProviderName = LocationManager.GPS_PROVIDER;
+      locman.addTestProvider(
+          testProviderName,
+          "requiresNetwork" == "",
+          "requiresSatellite" == "",
+          "requiresCell" == "",
+          "hasMonetaryCost" == "",
+          "supportsAltitude" == "",
+          "supportsSpeed" == "",
+          "supportsBearing" == "",
+          android.location.Criteria.POWER_LOW,
+          android.location.Criteria.ACCURACY_FINE);
+
+      locman.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+
+      Location location = setTestLocation(40.738412973944534,-73.98468017578125); 
+      locman.setTestProviderLocation(LocationManager.GPS_PROVIDER, location); 
+
     }
+
+  private Location setTestLocation(double lat, double lng) { 
+    Location location = new Location(LocationManager.GPS_PROVIDER); 
+    location.setLatitude(lat); 
+    location.setLongitude(lng); 
+    location.setSpeed(32f);
+    location.setAccuracy(3f);
+    location.setTime(System.currentTimeMillis()); 
+    return location;
+    //locationManager.setTestProviderLocation("gps", location); 
+  } 
 
   //public void onLocationChanged(Location location) {
   public void makeUseOfNewLocation(Location location) {
