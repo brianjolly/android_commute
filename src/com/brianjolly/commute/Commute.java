@@ -12,6 +12,7 @@ import android.location.LocationManager;
 import android.location.LocationProvider;
 
 import java.lang.reflect.Method;
+import android.util.Log;
 
 public class Commute extends Activity
 {
@@ -25,6 +26,8 @@ public class Commute extends Activity
     {
       super.onCreate(savedInstanceState);
       setContentView(R.layout.main);
+
+      Log.i("Commute", "Heading home!");
 
       maxSpeed = 0.0f;
       bestAccuracy = 999999999999.0f;
@@ -73,11 +76,14 @@ public class Commute extends Activity
 
   //public void onLocationChanged(Location location) {
   public void makeUseOfNewLocation(Location location) {
+
     if (location.getSpeed() > maxSpeed) {
       maxSpeed = location.getSpeed();
+      Log.i("Commute", "Commute.makeUseOfNewLocation() - new max speed - " + maxSpeed);
     }
     if (location.getAccuracy() < bestAccuracy) {
       bestAccuracy = location.getAccuracy();
+      Log.i("Commute", "Commute.makeUseOfNewLocation() - new best accuracy - " + bestAccuracy);
     }
     // at caltrain 4th&king 
     // @37.775930,-122.394997 +/- 12.000000m
@@ -87,17 +93,26 @@ public class Commute extends Activity
     // best accuracy 3.0000m
     // max speed 32.461445 m/s
     //
+    //
     Location latestLocation = location;
     String locationString = String.format(
-        "@ %f, %f \n\naccuracy +/- %fm \nbest accuracy %fm\n\nspeed: %f m/s\nmax speed: %f m/s",
+        "@ %f, %f \n\naccuracy +/- %fm \nbest accuracy %fm\n\nspeed: %f m/s\nspeed: %f mph\nmax speed: %f m/s\nmax speed: %f mph",
         location.getLatitude(),
         location.getLongitude(),
         location.getAccuracy(),
         bestAccuracy,
         location.getSpeed(),
-        maxSpeed
+        speedInMPH(location.getSpeed()),
+        maxSpeed,
+        speedInMPH(maxSpeed)
         );
     locationText.setText(locationString);
+
+  }
+
+  public Float speedInMPH( Float speedInMetersPerSec ) {
+    //1 meter per second = 2.23693629 miles per hour
+    return speedInMetersPerSec * 2.23693629f;
   }
 
 }
