@@ -87,14 +87,17 @@ public class Commute extends Activity
     // best accuracy 3.0000m
     // max speed 32.461445 m/s
     //
-    //
+    //time: %tm/%td/%ty %tH:%tM
     Location latestLocation = location;
     String locationString = String.format(
-        "@ %f, %f \n\naccuracy +/- %fm \nbest accuracy %fm\n\nspeed: %f m/s\nspeed: %f mph\nmax speed: %f m/s\nmax speed: %f mph",
+        "%tD %tr \n@ %f, %f \n\naccuracy +/- %fm \nbest accuracy %fm\n\naltitude %f\n\nspeed: %f m/s\nspeed: %f mph\nmax speed: %f m/s\nmax speed: %f mph",
+        location.getTime(),
+        location.getTime(),
         location.getLatitude(),
         location.getLongitude(),
         location.getAccuracy(),
         bestAccuracy,
+        location.getAltitude(),
         location.getSpeed(),
         speedInMPH(location.getSpeed()),
         maxSpeed,
