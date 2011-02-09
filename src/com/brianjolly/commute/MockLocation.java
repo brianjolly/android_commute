@@ -15,7 +15,7 @@ public class MockLocation {
 
     timer = new Timer();
     timer.schedule(new RemindTask(), 0, //initial delay
-        1 * 100); //subsequent rate
+        1 * 1000); //subsequent rate
   }
 
   private Location setTestLocation(double lat, double lng) { 
@@ -24,6 +24,7 @@ public class MockLocation {
     location.setLongitude(lng); 
     location.setSpeed(32f);
     location.setAccuracy(3f);
+    location.setAltitude(3d);
     location.setTime(System.currentTimeMillis()); 
     return location;
   } 
