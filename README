@@ -1,0 +1,10 @@
+Experimenting with Android GPS data
+
+  This code is messy and pieced together from various tutorials and the android docs.
+
+TODO:
+ x get gps data
+ x mock out gps data
+ - store gps data
+ - display a trip
+ - UI?
