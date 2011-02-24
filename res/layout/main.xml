@@ -10,10 +10,11 @@
     android:layout_height="wrap_content" 
     android:text="Hello World, Commute"
     />
+<!--
   <com.brianjolly.commute.BreadCrumbTrail
-    android:id="@+id/bread_crumb"
+    android:id="@+id/bread_crumb_trail"
     android:layout_width="fill_parent" 
     android:layout_height="wrap_content" 
-    />
+    />-->
 </LinearLayout>
 

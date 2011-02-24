@@ -8,12 +8,14 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.util.Log;
 import com.brianjolly.commute.model.MyLocation;
+import com.brianjolly.commute.view.BreadCrumbTrail;
 
 public class Commute extends Activity
 {
   private TextView locationText;
   private Float maxSpeed;
   private Float bestAccuracy;
+  private BreadCrumbTrail breadCrumbTrail;
 
   /** Called when the activity is first created. */
   @Override
@@ -26,25 +28,34 @@ public class Commute extends Activity
       maxSpeed = 0.0f;
       bestAccuracy = 999999999999.0f;
 
-      locationText = (TextView)findViewById(R.id.location_text);
-
       LocationManager locman = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
 
-      MyLocation myloc = new MyLocation(locman);
+      MyLocation myLoc = new MyLocation(locman);
 
-      myloc.setLocationChangeListener(new MyLocation.LocationChangeListener() {
+      locationText = (TextView)findViewById(R.id.location_text);
+
+      System.out.println("about to get bc");
+      //breadCrumbTrail = (BreadCrumbTrail)findViewById(R.id.bread_crumb_trail);
+      breadCrumbTrail = new BreadCrumbTrail(this, myLoc);
+
+      System.out.println("setting model on bc");
+      //breadCrumbTrail.setModel(myLoc);
+
+      myLoc.setLocationChangeListener(new MyLocation.LocationChangeListener() {
           @Override public void onLocationChange(Location l) {
               makeUseOfNewLocation( l );
-              // someView.invalidate();
           } 
       });
-
 
     }
 
   //public void onLocationChanged(Location location) {
   public void makeUseOfNewLocation(Location location) {
 
+    // refresh bread crumb view
+    breadCrumbTrail.invalidate();
+
+    // refresh text view
     if (location.getSpeed() > maxSpeed) {
       maxSpeed = location.getSpeed();
       Log.i("Commute", "Commute.makeUseOfNewLocation() - new max speed - " + maxSpeed);

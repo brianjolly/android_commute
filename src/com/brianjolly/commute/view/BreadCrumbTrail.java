@@ -7,14 +7,21 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
 
+import android.location.Location;
+
 import android.view.View;
+import com.brianjolly.commute.model.MyLocation;
 
 import android.util.Log;
 
 public class BreadCrumbTrail extends View {
 
-    public BreadCrumbTrail(Context context) {
+    private MyLocation model;
+    private Location location;
+
+    public BreadCrumbTrail(Context context, Location model) {
         super(context);
+        this.model = model;
         setMinimumWidth(180);
         setMinimumHeight(200);
         setFocusable(true);
@@ -48,4 +55,11 @@ public class BreadCrumbTrail extends View {
                 canvas.drawLine(0, y, 100, y, paint);
             }
         }
+
+    public void setModel(MyLocation model) {
+        this.model = model;
+        System.out.println("new locx: "+location.getLatitude());
+        System.out.println("new locy: "+location.getLongitude());
+    }
+
 }
