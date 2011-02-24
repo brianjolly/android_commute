@@ -1,18 +1,13 @@
 package com.brianjolly.commute;
 
-import android.app.Activity;
 import android.os.Bundle;
-
+import android.app.Activity;
 import android.content.Context;
 import android.widget.TextView;
-
 import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
-import android.location.LocationProvider;
-
-import java.lang.reflect.Method;
 import android.util.Log;
+import com.brianjolly.commute.model.MyLocation;
 
 public class Commute extends Activity
 {
@@ -25,6 +20,7 @@ public class Commute extends Activity
     public void onCreate(Bundle savedInstanceState)
     {
       super.onCreate(savedInstanceState);
+
       setContentView(R.layout.main);
 
       maxSpeed = 0.0f;
@@ -32,39 +28,17 @@ public class Commute extends Activity
 
       locationText = (TextView)findViewById(R.id.location_text);
 
-      // Define a listener that responds to location updates
-      LocationListener locationListener = new LocationListener() {
-        public void onLocationChanged(Location location) {
-          // Called when a new location is found by the network location provider.
-          makeUseOfNewLocation(location);
-        }
-        public void onStatusChanged(String provider, int status, Bundle extras) {}
-
-        public void onProviderEnabled(String provider) {}
-
-        public void onProviderDisabled(String provider) {}
-      };
-
-      LocationManager locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
-
-      // Register the listener with the Location Manager to receive location updates
-      //
-      // !commented out for mock 
-      //locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
-
-
-      //
-      //
-      // Mock Location
-      //
-      //
-
-      //LocationManager locman = (LocationManager)getContext().getSystemService(Context.LOCATION_SERVICE);
       LocationManager locman = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
 
-      locman.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+      MyLocation myloc = new MyLocation(locman);
 
-      MockLocation mockLoc = new MockLocation( locman );
+      myloc.setLocationChangeListener(new MyLocation.LocationChangeListener() {
+          @Override public void onLocationChange(Location l) {
+              makeUseOfNewLocation( l );
+              // someView.invalidate();
+          } 
+      });
+
 
     }
 

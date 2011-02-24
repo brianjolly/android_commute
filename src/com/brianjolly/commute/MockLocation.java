@@ -15,7 +15,9 @@ public class MockLocation {
 
     timer = new Timer();
     timer.schedule(new RemindTask(), 0, //initial delay
-        1 * 1000); //subsequent rate
+        1 * 100); //subsequent rate
+
+    System.out.println(":::::::::: timer: "+timer.toString());
   }
 
   private Location setTestLocation(double lat, double lng) { 
@@ -37,6 +39,7 @@ public class MockLocation {
 
         Location location = setTestLocation( (40 + numWarningBeeps), (-73 + numWarningBeeps) ); 
         locMan.setTestProviderLocation(LocationManager.GPS_PROVIDER, location); 
+        /*
         String testProviderName = LocationManager.GPS_PROVIDER;
         locMan.addTestProvider(
           testProviderName,
@@ -49,6 +52,7 @@ public class MockLocation {
           "supportsBearing" == "",
           android.location.Criteria.POWER_LOW,
           android.location.Criteria.ACCURACY_FINE);
+          */
 
         System.out.println("Beep!");
         numWarningBeeps--;
