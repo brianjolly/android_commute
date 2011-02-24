@@ -10,11 +10,14 @@ import java.util.Date;
 
 public class MyLocation {
 
+    private Location mocLocation;
     private Location currentLocation;
+    private LocationManager locationManager;
+    private String mocLocationProvider;
 
     public MyLocation(LocationManager locMan) {
 
-        LocationManager locationManager = locMan;
+        locationManager = locMan;
 
         // Define a listener that responds to location updates
         LocationListener locationListener = new LocationListener() {
@@ -28,7 +31,7 @@ public class MyLocation {
         };
         
         // Get GPS name from constant
-        String mocLocationProvider = locationManager.GPS_PROVIDER;
+        mocLocationProvider = locationManager.GPS_PROVIDER;
 
         // add a test provider using the mocLocationProvider name
         locationManager.addTestProvider(mocLocationProvider, false, true, false, false, true, true, true,
@@ -40,13 +43,27 @@ public class MyLocation {
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
 
         // set up a moc location
-        Location location = new Location(mocLocationProvider);
-        location.setLatitude(32.64480);
-        location.setLongitude(-16.90967);
-        location.setTime(new Date().getTime());
+        mocLocation = new Location(mocLocationProvider);
+        mocLocation.setLatitude(32.64480);
+        mocLocation.setLongitude(-16.90967);
+        mocLocation.setTime(new Date().getTime());
 
         // Set a moc location
-        locationManager.setTestProviderLocation(mocLocationProvider, location);
+        locationManager.setTestProviderLocation(mocLocationProvider, mocLocation);
+
+        MyTimer timer = new MyTimer(0,1);
+        timer.setTimerChangeListener(new MyTimer.TimerChangeListener() {
+            @Override public void onTimerChange(float ticks) {
+                setNewMocLocation(ticks);
+            }
+        });
+    }
+
+    private void setNewMocLocation(float ticks) {
+        mocLocation.setLatitude(37.775930+(ticks/100));
+        mocLocation.setLongitude(-122.394997+(ticks/100));
+        mocLocation.setTime(new Date().getTime());
+        locationManager.setTestProviderLocation(mocLocationProvider, mocLocation);
     }
 
     // pattern for listener comes from Example 7.6. The Dots Model
