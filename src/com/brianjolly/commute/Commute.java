@@ -12,30 +12,30 @@ import com.brianjolly.commute.view.BreadCrumbTrail;
 
 public class Commute extends Activity
 {
-  private TextView locationText;
-  private Float maxSpeed;
-  private Float bestAccuracy;
-  private BreadCrumbTrail breadCrumbTrail;
+private TextView locationText;
+private Float maxSpeed;
+private Float bestAccuracy;
+private BreadCrumbTrail breadCrumbTrail;
 
-  /** Called when the activity is first created. */
-  @Override
-    public void onCreate(Bundle savedInstanceState)
-    {
-      super.onCreate(savedInstanceState);
+/** Called when the activity is first created. */
+@Override
+public void onCreate(Bundle savedInstanceState)
+{
+  super.onCreate(savedInstanceState);
 
-      setContentView(R.layout.main);
+  setContentView(R.layout.main);
 
-      maxSpeed = 0.0f;
-      bestAccuracy = 999999999999.0f;
+  maxSpeed = 0.0f;
+  bestAccuracy = 999999999999.0f;
 
-      LocationManager locman = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+  LocationManager locman = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
 
-      MyLocation myLoc = new MyLocation(locman);
+  MyLocation myLoc = new MyLocation(locman);
 
-      locationText = (TextView)findViewById(R.id.location_text);
+  locationText = (TextView)findViewById(R.id.location_text);
 
-      System.out.println("about to get bc");
-      //breadCrumbTrail = (BreadCrumbTrail)findViewById(R.id.bread_crumb_trail);
+  System.out.println("about to get bc");
+	//breadCrumbTrail = (BreadCrumbTrail)findViewById(R.id.bread_crumb_trail);
       breadCrumbTrail = new BreadCrumbTrail(this, myLoc);
 
       System.out.println("setting model on bc");

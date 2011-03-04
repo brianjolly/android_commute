@@ -19,7 +19,7 @@ public class BreadCrumbTrail extends View {
     private MyLocation model;
     private Location location;
 
-    public BreadCrumbTrail(Context context, Location model) {
+    public BreadCrumbTrail(Context context, MyLocation model) {
         super(context);
         this.model = model;
         setMinimumWidth(180);
