@@ -4,55 +4,53 @@ import android.os.Bundle;
 import android.app.Activity;
 import android.content.Context;
 import android.widget.TextView;
+import android.widget.LinearLayout;
 import android.location.Location;
 import android.location.LocationManager;
 import android.util.Log;
 import com.brianjolly.commute.model.MyLocation;
 import com.brianjolly.commute.view.BreadCrumbTrail;
 
-public class Commute extends Activity
-{
+public class Commute extends Activity {
     private TextView locationText;
     private Float maxSpeed;
     private Float bestAccuracy;
     private BreadCrumbTrail breadCrumbTrail;
+    private LinearLayout root;
 
     /** Called when the activity is first created. */
-    @Override
-        public void onCreate(Bundle savedInstanceState)
-        {
-            super.onCreate(savedInstanceState);
+    @Override public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
-            setContentView(R.layout.main);
+        setContentView(R.layout.main);
 
-            maxSpeed = 0.0f;
-            bestAccuracy = 999999999999.0f;
+        root = (LinearLayout)findViewById(R.id.root);
 
-            LocationManager locman = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+        maxSpeed = 0.0f;
+        bestAccuracy = 999999999999.0f;
 
-            MyLocation myLoc = new MyLocation(locman);
+        LocationManager locman = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
 
-            locationText = (TextView)findViewById(R.id.location_text);
+        MyLocation myLoc = new MyLocation(locman);
 
-            System.out.println("about to get bc");
-            //breadCrumbTrail = (BreadCrumbTrail)findViewById(R.id.bread_crumb_trail);
-            breadCrumbTrail = new BreadCrumbTrail(this, myLoc);
+        locationText = (TextView)findViewById(R.id.location_text);
 
-            System.out.println("setting model on bc");
-            //breadCrumbTrail.setModel(myLoc);
+        breadCrumbTrail = new BreadCrumbTrail(this, myLoc);
 
-            myLoc.setLocationChangeListener(new MyLocation.LocationChangeListener() {
-                @Override public void onLocationChange(Location l) {
-                    makeUseOfNewLocation( l );
-                } 
-            });
+        root.addView(breadCrumbTrail,0);
 
-        }
+        myLoc.setLocationChangeListener(new MyLocation.LocationChangeListener() {
+            @Override public void onLocationChange(Location l) {
+                makeUseOfNewLocation( l );
+            } 
+        });
+    }
 
     //public void onLocationChanged(Location location) {
     public void makeUseOfNewLocation(Location location) {
 
         // refresh bread crumb view
+        System.out.println("Invalidate"+breadCrumbTrail.toString());
         breadCrumbTrail.invalidate();
 
         // refresh text view
@@ -97,4 +95,4 @@ public class Commute extends Activity
         return speedInMetersPerSec * 2.23693629f;
     }
 
-    }
+}

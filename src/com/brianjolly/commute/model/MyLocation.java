@@ -33,7 +33,7 @@ public class MyLocation {
         // Get GPS name from constant
         mocLocationProvider = locationManager.GPS_PROVIDER;
 
-        // add a test provider using the mocLocationProvider name
+        // Add a test provider using the mocLocationProvider name
         locationManager.addTestProvider(mocLocationProvider, false, true, false, false, true, true, true,
                 Criteria.POWER_LOW, Criteria.ACCURACY_COARSE);
 
@@ -42,7 +42,7 @@ public class MyLocation {
 
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
 
-        // set up a moc location
+        // Set up a moc location
         mocLocation = new Location(mocLocationProvider);
         mocLocation.setLatitude(32.64480);
         mocLocation.setLongitude(-16.90967);
@@ -60,8 +60,8 @@ public class MyLocation {
     }
 
     private void setNewMocLocation(float ticks) {
-        mocLocation.setLatitude(37.775930+(ticks/100));
-        mocLocation.setLongitude(-122.394997+(ticks/100));
+        mocLocation.setLatitude(37.00+(ticks/100));
+        mocLocation.setLongitude(-122.00+(ticks/100));
         mocLocation.setTime(new Date().getTime());
         locationManager.setTestProviderLocation(mocLocationProvider, mocLocation);
     }
@@ -82,6 +82,14 @@ public class MyLocation {
         if (null != locationChangeListener) {
             locationChangeListener.onLocationChange(currentLocation);
         }
+    }
+
+    public double getLat() {
+        return currentLocation.getLatitude();
+    }
+
+    public double getLon() {
+        return currentLocation.getLongitude();
     }
 
 }
