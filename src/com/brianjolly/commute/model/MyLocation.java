@@ -14,6 +14,7 @@ public class MyLocation {
     private Location currentLocation;
     private LocationManager locationManager;
     private String mocLocationProvider;
+    private Date date;
 
     public MyLocation(LocationManager locMan) {
 
@@ -42,11 +43,12 @@ public class MyLocation {
 
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
 
+        date = new Date();
         // Set up a moc location
         mocLocation = new Location(mocLocationProvider);
         mocLocation.setLatitude(32.64480);
         mocLocation.setLongitude(-16.90967);
-        mocLocation.setTime(new Date().getTime());
+        mocLocation.setTime(date.getTime());
 
         // Set a moc location
         locationManager.setTestProviderLocation(mocLocationProvider, mocLocation);
@@ -63,6 +65,7 @@ public class MyLocation {
         mocLocation.setLatitude(37.00+(ticks/100));
         mocLocation.setLongitude(-122.00+(ticks/100));
         mocLocation.setTime(new Date().getTime());
+        //mocLocation.setTime(date.getTime());
         locationManager.setTestProviderLocation(mocLocationProvider, mocLocation);
     }
 

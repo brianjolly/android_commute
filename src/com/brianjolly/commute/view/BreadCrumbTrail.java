@@ -44,8 +44,8 @@ public class BreadCrumbTrail extends View {
         float biggerx = (newx*100f)*2;
         float biggery = ((newy*100f)*-1)*2;
 
-        System.out.println("new x: "+biggerx);
-        System.out.println("new y: "+biggery);
+        //System.out.println("new x: "+biggerx);
+        //System.out.println("new y: "+biggery);
 
         canvas.drawColor(Color.WHITE);
 

@@ -50,7 +50,6 @@ public class Commute extends Activity {
     public void makeUseOfNewLocation(Location location) {
 
         // refresh bread crumb view
-        System.out.println("Invalidate"+breadCrumbTrail.toString());
         breadCrumbTrail.invalidate();
 
         // refresh text view

@@ -12,7 +12,6 @@ public class MyTimer {
         ticks = 0;
         timer = new Timer();
         timer.schedule(new RemindTask(), initialDelay, ticksPerSecond * 1000);
-            System.out.println("set up timer");
     }
 
     class RemindTask extends TimerTask {
@@ -23,8 +22,6 @@ public class MyTimer {
     }
 
     public static void main(String args[]) {
-        System.out.println("About to schedule task.");
-        System.out.println("Task scheduled.");
     }
 
     private TimerChangeListener timerChangeListener;
