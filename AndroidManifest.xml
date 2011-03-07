@@ -13,5 +13,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        TODO: need to fix this provider
+        <provider android:name=".model.LocationContentProvider"
+                  android:authorities="com.brianjolly.commute.model.CommuteTrips"/>
     </application>
 </manifest> 
