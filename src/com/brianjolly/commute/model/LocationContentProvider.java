@@ -1,71 +1,101 @@
 package com.brianjolly.commute.model;
 
+import java.util.HashMap;
 import android.content.ContentProvider;
 import android.content.UriMatcher;
 import android.net.Uri;
 import android.database.Cursor;
 import android.content.ContentValues;
+import android.content.ContentUris;
 import android.database.sqlite.SQLiteDatabase; 
 import android.database.sqlite.SQLiteOpenHelper;
+import android.database.sqlite.SQLiteQueryBuilder;
+import android.database.sqlite.SQLiteException;
 import android.text.TextUtils;
+import android.content.Context;
+import com.brianjolly.commute.model.CommuteTrips;
+import com.brianjolly.commute.model.CommuteTrips.Trip;
+import com.brianjolly.commute.model.CommuteTrips.Location;
 
-//public class SimpleFinchVideoContentProvider extends ContentProvider {
 public class LocationContentProvider extends ContentProvider {
+
+    private static final String TAG = "LocationContentProvider";
+	
     private static final String DATABASE_NAME = "simple_video.db";
-    private static final int DATABASE_VERSION = 2; 
-    private static final String VIDEO_TABLE_NAME = "video";
+    private static final int DATABASE_VERSION = 1; 
+    private static final String TRIP_TABLE_NAME = "trip";
     private DatabaseHelper mOpenHelper;
 
     private static UriMatcher sUriMatcher;
+    private static HashMap sTripsProjectionMap;
+    private static HashMap sLocationsProjectionMap;
 
-    //private static final int VIDEOS = 1;
-    //private static final int VIDEO_ID = 2;
     private static final int TRIPS = 1;
     private static final int TRIP_ID = 2;
 
     static {
         sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-        //sUriMatcher.addURI(AUTHORITY, FinchVideo.SimpleVideos.VIDEO, VIDEOS);
-        sUriMatcher.addURI(CommuteTrips.Trips.AUTHORITY, CommuteTrips.Trips.TRIP, TRIPS);
-        // use of the hash character indicates matching of an id
-        sUriMatcher.addURI(CommuteTrips.Trips.AUTHORITY, CommuteTrips.Trips.TRIP + "/#", TRIP_ID);
+        sUriMatcher.addURI(CommuteTrips.Trip.AUTHORITY, CommuteTrips.Trip.TRIP, TRIPS);
+        sUriMatcher.addURI(CommuteTrips.Trip.AUTHORITY, CommuteTrips.Trip.TRIP + "/#", TRIP_ID);
+
+		sTripsProjectionMap = new HashMap<String, String>();
+		sTripsProjectionMap.put(Trip.NAME, Trip.NAME);
+		sTripsProjectionMap.put(Trip.DATE, Trip.DATE);
+
+		sLocationsProjectionMap = new HashMap<String, String>();
+		sLocationsProjectionMap.put(Location.LATITUDE, Location.LATITUDE);
+		sLocationsProjectionMap.put(Location.LONGITUDE, Location.LONGITUDE);
+		sLocationsProjectionMap.put(Location.ALTITUDE, Location.ALTITUDE);
     }
 
-    @Override public boolean onCreate() { }
-
     private static class DatabaseHelper extends SQLiteOpenHelper {
+
+		DatabaseHelper(Context context) {
+			super(context, DATABASE_NAME, null, DATABASE_VERSION);
+		}
+
         public void onCreate(SQLiteDatabase sqLiteDatabase) {
             createTable(sqLiteDatabase);
         }
 
         // create table method may also be called from onUpgrade
         private void createTable(SQLiteDatabase sqLiteDatabase) {
-            String tripQs = "CREATE TABLE " + CommuteTrips.Trips.TRIP_TABLE_NAME + " (" +
-                CommuteTrips.Trips._ID + " INTEGER PRIMARY KEY, " +
-                CommuteTrips.Trips.NAME+ " TEXT, " +
-                CommuteTrips.Trips.DATE+ " INTEGER);";
+            String tripQs = "CREATE TABLE " + CommuteTrips.Trip.TRIP_TABLE_NAME + " (" +
+                CommuteTrips.Trip._ID + " INTEGER PRIMARY KEY, " +
+                CommuteTrips.Trip.NAME+ " TEXT, " +
+                CommuteTrips.Trip.DATE+ " INTEGER);";
             sqLiteDatabase.execSQL(tripQs);
             // TODO: I'm not sure if this is the right way to run two sql statements
-            String locQs = "CREATE TABLE " + CommuteTrips.Trips.LOCATION_TABLE_NAME + " (" +
-                CommuteTrips.Locations._ID + " INTEGER PRIMARY KEY, " +
-                CommuteTrips.Locations.LATITUDE+ " REAL, " +
-                CommuteTrips.Locations.LONGITUDE+ " REAL, " +
-                CommuteTrips.Locations.ALTITITUDE+ " REAL, " +
-                CommuteTrips.Locations.TIME+ " INTEGER);";
+            String locQs = "CREATE TABLE " + CommuteTrips.Location.LOCATION_TABLE_NAME + " (" +
+                CommuteTrips.Location._ID + " INTEGER PRIMARY KEY, " +
+                CommuteTrips.Location.LATITUDE+ " REAL, " +
+                CommuteTrips.Location.LONGITUDE+ " REAL, " +
+                CommuteTrips.Location.ALTITUDE+ " REAL, " +
+                CommuteTrips.Location.TIME+ " INTEGER);";
             sqLiteDatabase.execSQL(locQs);
         }
-        public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {}
+        public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+			/*Log.w(TAG, "Upgrading database from version " + oldVersion + " to " +
+					newVersion + ", which will destroy all old data"); */
+			db.execSQL("DROP TABLE IF EXISTS notes");
+			onCreate(db);
+		}
     }
 
+	@Override public boolean onCreate() {
+		mOpenHelper = new DatabaseHelper(getContext());
+		return true;
+	}
+
     public String getType(Uri uri) {
+
         switch (sUriMatcher.match(uri)) {
-            //case VIDEOS:
             case TRIPS:
-                return CommuteTrips.Trips.CONTENT_TYPE;
+                return CommuteTrips.Trip.CONTENT_TYPE;
                 //return FinchVideo.SimpleVideos.CONTENT_TYPE;
 
             case TRIP_ID:
-                return CommuteTrips.Trips.CONTENT_TRIP_TYPE;
+                return CommuteTrips.Trip.CONTENT_TRIP_TYPE;
                 //return FinchVideo.SimpleVideos.CONTENT_VIDEO_TYPE;
 
             default:
@@ -75,137 +105,110 @@ public class LocationContentProvider extends ContentProvider {
 
     @Override public Cursor query(Uri uri, String[] projection, String where, 
             String[] whereArgs, String sortOrder) {
-        // If no sort order is specified use the default
-        String orderBy;
-        if (TextUtils.isEmpty(sortOrder)) {
-            orderBy = CommuteTrips.Trips.DEFAULT_SORT_ORDER;
-            //orderBy = FinchVideo.SimpleVideos.DEFAULT_SORT_ORDER;
-        } else {
-            orderBy = sortOrder;
-        }        
 
-        int match = sUriMatcher.match(uri);
+		SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
+		qb.setTables(TRIP_TABLE_NAME);
 
-        Cursor c;
-
-        switch (match) {
-           // case VIDEOS:
+        switch (sUriMatcher.match(uri)) {
             case TRIPS:
-                // query the database for all videos
-                //c = mDb.query(CommuteTrips.Trips.TRIP_TABLE_NAME, projection,
-                c = mOpenHelper.query(CommuteTrips.Trips.TRIP_TABLE_NAME, projection,
-                        where, whereArgs,
-                        null, null, sortOrder);
-
-                // the call to notify the uri after deletion is explicit
-                c.setNotificationUri(mContentResolver,
-                        CommuteTrips.Trips.CONTENT_URI);
+				qb.setProjectionMap(sTripsProjectionMap);
                 break;
             case TRIP_ID:
-                // query the database for a specific video
-                long tripID = ContentUris.parseId(uri);
-                //c = mDb.query(CommuteTrips.Trips.TRIP_TABLE_NAME, projection,
-                c = mOpenHelper.query(CommuteTrips.Trips.TRIP_TABLE_NAME, projection,
-                        CommuteTrips.Trips._ID + " = " + videoID +
-                        (!TextUtils.isEmpty(where) ?
-                         " AND (" + where + ')' : ""),
-                        whereArgs, null, null, sortOrder);
+				qb.setProjectionMap(sTripsProjectionMap);
+				qb.appendWhere(Trip._ID + "=" + uri.getPathSegments().get(1));
                 break;
             default:
                 throw new IllegalArgumentException("unsupported uri: " + uri);
         }
+		
+        // If no sort order is specified use the default
+        String orderBy;
+        if (TextUtils.isEmpty(sortOrder)) {
+            orderBy = CommuteTrips.Trip.DEFAULT_SORT_ORDER;
+        } else {
+            orderBy = sortOrder;
+        }        
+
+		// Get the database and run the query
+		SQLiteDatabase db = mOpenHelper.getReadableDatabase();
+		Cursor c = qb.query(db, projection, where, whereArgs, null, null, sortOrder);
+
+		// Tell the cursor what uri to watch, so it knows when it's source data changes
+		c.setNotificationUri(getContext().getContentResolver(), uri);
 
         return c;
     }
 
-    @Override public Uri insert(Uri uri, ContentValues values) {
-        // Validate the requested uri
-        int m = sUriMatcher.match(uri);
-        if (m != TRIPS) {
-            throw new IllegalArgumentException("Unknown URI " + uri);
-        }
+    @Override public Uri insert(Uri uri, ContentValues initialValues) {
 
-        int match = sUriMatcher.match(uri);
-        Uri insertUri = null;
-        switch (match) {
-            case TRIPS:
-                // insert the values into a new database row
-                SQLiteDatabase db = mOpenHelper.getWritableDatabase();
-                long rowId = db.insert(CommuteTrips.Trips.TRIP_TABLE_NAME,
-                        CommuteTrips.Trips.TRIP, values);
-                if (rowId > 0) {
-                    insertUri =
-                        ContentUris.withAppendedId(
-                                CommuteTrips.Trips.CONTENT_URI, rowId);
-                    // the call to notify the uri after deletion is explicit
-                    mContentResolver.notifyChange(insertUri, null);
-                }
-                break;
-            case TRIP_ID:
-                break;
-            default:
-                throw new IllegalArgumentException("unknown trip: " +
-                        uri);
-        }
+		// Validate the requested uri
+		 if (sUriMatcher.match(uri) != TRIPS) {
+			throw new IllegalArgumentException("Unknown Uri " + uri);
+		 }
+		 ContentValues values;
+		 if (initialValues != null) {
+			 values = new ContentValues(initialValues);
+		 } else {
+			 values = new ContentValues();
+		 }
 
-        return insertUri;
-    }
+		 Long now = Long.valueOf(System.currentTimeMillis());
+
+		 // Make sure that the fields are all set
+		 if (values.containsKey(CommuteTrips.Trip.NAME) == false) {
+			 values.put(CommuteTrips.Trip.NAME, "");
+		 }
+		 if (values.containsKey(CommuteTrips.Trip.DATE) == false) {
+			 values.put(CommuteTrips.Trip.DATE, now);
+		 }
+
+		 SQLiteDatabase db = mOpenHelper.getWritableDatabase();
+		 long rowId = db.insert(TRIP_TABLE_NAME, Trip.TRIP, values);
+		 if (rowId > 0) {
+			 Uri tripUri = ContentUris.withAppendedId(CommuteTrips.Trip.CONTENT_URI, rowId);
+			 getContext().getContentResolver().notifyChange(tripUri, null);
+			 return tripUri;
+		 }
+
+		 throw new SQLiteException("Failed to insert row into " + uri);
+	}
 
     @Override public int update(Uri uri, ContentValues values, String where, String[] whereArgs) {
-        mContentResolver.notifyChange(uri, null);
-
-        SQLiteDatabase db = mOpenHelper.getWritableDatabase();
-        int affected;
-        switch (sUriMatcher.match(uri)) {
-            case TRIPS:
-                affected = db.update(TRIP_TABLE_NAME, values, where, whereArgs);
-                break;
-
-            case TRIP_ID:
-                String videoId = uri.getPathSegments().get(1);
-                affected = db.update(CommuteTrips.Trips.TRIP_TABLE_NAME, values,
-                        CommuteTrips.Trips._ID + "=" + videoId
-                        + (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : ""),
-                        whereArgs);
-                break;
-
-            default:
-                throw new IllegalArgumentException("Unknown URI " + uri);
-        }
-
-        // the call to notify the uri after deletion is explicit
-        getContext().getContentResolver().notifyChange(uri, null);
-        return affected;
+		SQLiteDatabase db = mOpenHelper.getReadableDatabase();
+		int count;
+		switch (sUriMatcher.match(uri)) {
+			case TRIPS:
+				count = db.update(TRIP_TABLE_NAME, values, where, whereArgs);
+				break;
+			case TRIP_ID:
+				String tripId = uri.getPathSegments().get(1);
+				count = db.update(TRIP_TABLE_NAME, values, Trip._ID + "=" + tripId
+						+ (!TextUtils.isEmpty(where) ? "AND (" + where + ')': ""), whereArgs);
+					break;
+			default: 
+				throw new IllegalArgumentException("Unknown URI " + uri);
+		}
+		getContext().getContentResolver().notifyChange(uri, null);
+		return count;
     }
 
     @Override public int delete(Uri uri, String where, String[] whereArgs) {
-        int match = sUriMatcher.match(uri);
-        int affected;
-
-        switch (match) {
-            case TRIPS:
-                //affected = mDb.delete(CommuteTrips.Trips.TRIP_TABLE_NAME,
-                affected = mOpenHelper.delete(CommuteTrips.Trips.TRIP_TABLE_NAME,
-                        (!TextUtils.isEmpty(where) ?
-                         " AND (" + where + ')' : ""),
-                        whereArgs);
-                break;
-            case TRIP_ID:
-                long videoId = ContentUris.parseId(uri);
-                //affected = mDb.delete(CommuteTrips.Trips.TRIP_TABLE_NAME,
-                affected = mOpenHelper.delete(CommuteTrips.Trips.TRIP_TABLE_NAME,
-                        FinchVideo.SimpleVideos._ID + "=" + videoId
-                        + (!TextUtils.isEmpty(where) ?
-                            " AND (" + where + ')' : ""),
-                        whereArgs);
-                // the call to notify the uri after deletion is explicit
-                mContentResolver.notifyChange(uri, null);
-                break;
-            default:
-                throw new IllegalArgumentException("unknown trip: " +
-                        uri);
-        }
-        return affected;
+		SQLiteDatabase db = mOpenHelper.getReadableDatabase();
+		int count;
+		switch (sUriMatcher.match(uri)) {
+			case TRIPS:
+				count = db.delete(TRIP_TABLE_NAME, where, whereArgs);
+				break;
+			case TRIP_ID:
+				String tripId = uri.getPathSegments().get(1);
+				count = db.delete(TRIP_TABLE_NAME, Trip._ID + "=" + tripId
+						+ (!TextUtils.isEmpty(where) ? "AND (" + where + ')': ""), whereArgs);
+					break;
+			default: 
+				throw new IllegalArgumentException("Unknown URI " + uri);
+		}
+		getContext().getContentResolver().notifyChange(uri, null);
+		return count;
     }
 
 }

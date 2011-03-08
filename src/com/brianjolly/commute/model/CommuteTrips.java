@@ -15,17 +15,17 @@ import android.net.Uri;
 public class CommuteTrips {
 
     //public static final class SimpleVideos implements BaseColumns {
-    public static final class Trips implements BaseColumns {
+    public static final class Trip implements BaseColumns {
         
         // This class cannot be instantiated
         //private SimpleVideos() {}
-        private Trips() {}
+        private Trip() {}
 
         public static final String AUTHORITY = "com.brianjolly.commute.model.CommuteTrips";
         public static final String DEFAULT_SORT_ORDER = "DESC"; //TODO: check if this is a real sort order
 
         // uri references all trips 
-        public static final Uri TRIPS_URI = Uri.parse("content://" + AUTHORITY + "/" + Trips.TRIP);
+        public static final Uri TRIPS_URI = Uri.parse("content://" + AUTHORITY + "/" + Trip.TRIP);
 
         /**
          * The content:// style URL for this table
@@ -68,15 +68,15 @@ public class CommuteTrips {
 
     }
 
-    public static final class Locations implements BaseColumns {
+    public static final class Location implements BaseColumns {
         // This class cannot be instantiated
-        private Locations() {}
+        private Location() {}
 
-        public static final String AUTHORITY = "com.brianjolly.commute.model.Locations";
+        public static final String AUTHORITY = "com.brianjolly.commute.model.Location";
         public static final String DEFAULT_SORT_ORDER = "DESC"; //TODO: check if this is a real sort order
 
         // uri references all locations 
-        public static final Uri LOCATIONS_URI = Uri.parse("content://" + AUTHORITY + "/" + Locations.LOCATION);
+        public static final Uri LOCATIONS_URI = Uri.parse("content://" + AUTHORITY + "/" + Location.LOCATION);
 
         /**
          * The content:// style URL for this table
@@ -130,4 +130,5 @@ public class CommuteTrips {
         public static final String TIME = "time";
 
     }
+
 } 
