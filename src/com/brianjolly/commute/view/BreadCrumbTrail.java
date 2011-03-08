@@ -41,33 +41,16 @@ public class BreadCrumbTrail extends View {
         float newx = lat%1;
         float newy = lon%1;
 
-        float biggerx = (newx*100f)*2;
-        float biggery = ((newy*100f)*-1)*2;
-
-        //System.out.println("new x: "+biggerx);
-        //System.out.println("new y: "+biggery);
+        float biggerx = ((newy*100f)*-1)*2;
+        float biggery = (newx*100f)*2;
 
         canvas.drawColor(Color.WHITE);
 
         Paint paint = new Paint();
 
         //             (startx, starty, endx, endy)
-        canvas.drawLine(biggerx, 0, biggerx, this.getHeight(), paint);
-        canvas.drawLine(0, biggery, this.getWidth(), biggery, paint);
-
-        /*
-        paint.setColor(Color.RED);
-        paint.setStrokeWidth(10);
-        canvas.drawLine(56, 0, 56, 100, paint);
-
-        paint.setColor(Color.GREEN);
-        paint.setStrokeWidth(5);
-
-        for (int y = 30, alpha = 255; alpha > 2; alpha >>= 1, y += 10) {
-            paint.setAlpha(alpha);
-            canvas.drawLine(0, y, 100, y, paint);
-        }
-        */
+        canvas.drawLine(0, biggery, this.getWidth(), biggery, paint);  //latitude
+        canvas.drawLine(biggerx, 0, biggerx, this.getHeight(), paint);   //longitude
     }
 
 }

@@ -88,11 +88,11 @@ public class MyLocation {
     }
 
     public double getLat() {
-        return currentLocation.getLatitude();
+        return (null != currentLocation) ? currentLocation.getLatitude() : 0.0;
     }
 
     public double getLon() {
-        return currentLocation.getLongitude();
+        return (null != currentLocation) ? currentLocation.getLongitude() : 0.0;
     }
 
 }
