@@ -35,6 +35,7 @@ public class MyTimer {
     }
 
     private void notifyListener() {
+		 // TODO: replace null check with exception
         if (null != timerChangeListener) {
             timerChangeListener.onTimerChange(ticks);
         }

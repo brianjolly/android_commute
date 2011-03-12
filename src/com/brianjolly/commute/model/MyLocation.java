@@ -82,16 +82,21 @@ public class MyLocation {
     }
 
     private void notifyListener() {
+		 // TODO: replace null check with exception
         if (null != locationChangeListener) {
             locationChangeListener.onLocationChange(currentLocation);
         }
     }
 
     public double getLat() {
+		// TODO: Find out why currentLocation aometimes isn't available when getLat() is called
+		// TODO: Replace null check with exception
         return (null != currentLocation) ? currentLocation.getLatitude() : 0.0;
     }
 
     public double getLon() {
+		// TODO: Find out why currentLocation aometimes isn't available when getLon() is called
+		// TODO: replace null check with exception
         return (null != currentLocation) ? currentLocation.getLongitude() : 0.0;
     }
 

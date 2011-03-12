@@ -146,6 +146,7 @@ public class LocationContentProvider extends ContentProvider {
 			throw new IllegalArgumentException("Unknown Uri " + uri);
 		 }
 		 ContentValues values;
+		 // TODO: replace null check with exception
 		 if (initialValues != null) {
 			 values = new ContentValues(initialValues);
 		 } else {
